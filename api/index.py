@@ -18,7 +18,7 @@ CORS(app)
 model = joblib.load(MODEL_PATH)
 
 
-@app.route("/")
+@app.route("/api")
 def home():
     return jsonify({
         "message": "AI Email Spam & Scam Detector API is running"
