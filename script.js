@@ -3,14 +3,14 @@ async function checkEmail() {
     const result = document.getElementById("result");
 
     if (emailText.trim() === "") {
-        result.innerText = "Please enter an email.";
+        result.innerHTML = "Please enter an email message.";
         return;
     }
 
-    result.innerText = "Checking email...";
+    result.innerHTML = "Checking email...";
 
     try {
-        const response = await fetch("http://127.0.0.1:8000/predict", {
+        const response = await fetch("/api/predict", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -22,8 +22,20 @@ async function checkEmail() {
 
         const data = await response.json();
 
-        result.innerText = "Result: " + data.prediction;
+        if (!response.ok) {
+            result.innerHTML = data.error || "Something went wrong.";
+            return;
+        }
+
+        result.innerHTML = `
+            <p>Result: ${data.prediction}</p>
+            <p>Confidence: ${data.confidence}%</p>
+            <p>Risk Level: ${data.risk}</p>
+            <p>Scam Score: ${data.scam_score}</p>
+        `;
+
     } catch (error) {
-        result.innerText = "Unable to connect to the backend.";
+        result.innerHTML = "Unable to connect to the backend.";
+        console.error(error);
     }
 }
